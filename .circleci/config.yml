@@ -19,6 +19,9 @@ jobs:
       - run:
           name: Run tests
           command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
+      - run:
+          name: Run e2e tests
+          command: npm run test:e2e --ci --runInBand --reporters=default --reporters=jest-junit
       - store_test_results:
           path: ./test-results/
   build-node:
