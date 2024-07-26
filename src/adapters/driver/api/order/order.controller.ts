@@ -1,19 +1,21 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateOrderDto } from './dtos/create-order.dto';
+import { OrderService } from 'src/core/application/services/order/order.service';
 
 @ApiTags('order')
 @Controller('order')
 export class OrderController {
+  constructor(private orderService: OrderService) {}
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order' + JSON.stringify(createOrderDto);
+    return this.orderService.createOrder(createOrderDto);
   }
 
   @Get()
+  @HttpCode(200)
   findAll() {
-    return 'This action returns all orders';
+    return this.orderService.findAll();
   }
-
 }

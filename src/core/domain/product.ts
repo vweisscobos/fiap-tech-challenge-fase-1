@@ -1,16 +1,19 @@
-import { PersistedEntity } from "./persisted-entity";
+import { Entity, NotPersistedEntity, PersistedEntity } from "./entity";
 import { ProductCategory, ProductCategoryValue } from "./value-objects/product-category";
 
-class _Product<T extends PersistedEntity | null> {
-  id: T["id"];
-  createdAt: T["createdAt"];
-  updatedAt: T["updatedAt"];
+class _Product<T extends PersistedEntity | NotPersistedEntity = PersistedEntity> extends Entity<T> {
   name: string;
   price: number;
   description: string;
   category: ProductCategory;
 
-  constructor(product: { name: string; price: number; description: string; category: ProductCategoryValue }) {
+  constructor(product: {
+    name: string;
+    price: number;
+    description: string;
+    category: ProductCategoryValue
+  } & T) {
+    super(product);
     this.name = product.name;
     this.price = product.price;
     this.description = product.description;
@@ -25,6 +28,6 @@ class _Product<T extends PersistedEntity | null> {
   }
 }
 
-export class Product extends _Product<PersistedEntity> {}
+export class Product extends _Product {}
 
-export class NotPersistedProduct extends _Product<null> {}
+export class NotPersistedProduct extends _Product<NotPersistedEntity> {}

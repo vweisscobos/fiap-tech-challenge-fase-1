@@ -7,5 +7,5 @@ export abstract class ProductRepository {
   abstract findByCategory(category: ProductCategoryValue): Promise<Product[]>;
   abstract delete(id: string): Promise<void>;
   abstract update(id: string, product: Product): Promise<Product>;
-  abstract find(id: string): Promise<Product>;
+  abstract find(id: string): Promise<Product | null>;
 }

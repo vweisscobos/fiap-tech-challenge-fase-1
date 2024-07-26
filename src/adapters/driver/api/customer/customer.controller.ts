@@ -1,20 +1,24 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginCustomerDto } from './dtos/login-customer.dto';
+import { CustomerService } from 'src/core/application/services/customer/customer.service';
 
 @ApiTags('customer')
 @Controller('customer')
 export class CustomerController {
+  constructor(private customerService: CustomerService) {}
 
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer:' + createCustomerDto;
+    const customer = this.customerService.create(createCustomerDto);
+    return customer;
   }
 
   @Post('login')
+  @HttpCode(200)
   login(@Body() loginCustomerDto: LoginCustomerDto) {
-    return 'This action logs in a customer:' + loginCustomerDto;
+    return this.customerService.login(loginCustomerDto.email, loginCustomerDto.document);
   }
 
 }

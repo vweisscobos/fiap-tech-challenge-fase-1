@@ -1,30 +1,40 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductCategoryValue } from 'src/core/domain/value-objects/product-category';
+import { ProductService } from 'src/core/application/services/product/product.service';
+import { NotFoundError } from 'src/core/application/errors/not-found.error';
 
 @ApiTags('product')
 @Controller('product')
 export class ProductController {
+  constructor(private productService: ProductService) {}
+
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return 'This action adds a new product: ' + JSON.stringify(createProductDto);
+  async create(@Body() createProductDto: CreateProductDto) {
+    return await this.productService.create(createProductDto);
   }
 
   @Get()
+  @HttpCode(200)
   @ApiQuery({ name: 'category', enum: ProductCategoryValue })
-  find(@Query('category') category: ProductCategoryValue) {
-    return 'This action returns all products: ' + category;
+  async find(@Query('category') category: ProductCategoryValue) {
+    return await this.productService.findByCategory(category);
   }
 
-  @Delete()
-  delete(@Param('id') id: string) {
-    return 'This action removes a product: ' + id;
+  @Delete('/:id')
+  @HttpCode(204)
+  async delete(@Param('id') id: string) {
+    try {
+      await this.productService.delete(id);
+    } catch (error) {
+      if (error instanceof NotFoundError) throw new NotFoundException('Product not found');
+    }
   }
 
-  @Put()
+  @Put('/:id')
   update(@Param('id') id: string, @Body() updateProductDto: CreateProductDto) {
-    return 'This action updates a product: ' + id + ' ' + JSON.stringify(updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
 }

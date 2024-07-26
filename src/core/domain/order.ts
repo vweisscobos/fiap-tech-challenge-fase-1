@@ -1,18 +1,24 @@
 import { Customer } from "./customer";
-import { PersistedEntity } from "./persisted-entity";
-import { Product } from "./product";
+import { Entity, NotPersistedEntity, PersistedEntity } from "./entity";
 import { OrderStatus, OrderStatusValue } from "./value-objects/order-status";
+import { ProductCategory } from "./value-objects/product-category";
 
-class _Order<T extends PersistedEntity | null> {
-  id: T["id"];
-  createdAt: T["createdAt"];
-  updatedAt: T["updatedAt"];
-  customer?: Customer;
-  products: Product[];
+type OrderProduct = {
+  name: string;
+  price: number;
+  description: string;
+  category: ProductCategory;
+  quantity: number;
+}
+
+class _Order<T extends PersistedEntity | NotPersistedEntity = PersistedEntity> extends Entity<T> {
+  customer: Customer | null;
+  products: OrderProduct[];
   total: number;
   status: OrderStatus;
 
-  constructor(order: { customer?: Customer; products: Product[]; status: OrderStatusValue; total: number }) {
+  constructor(order: { customer: Customer | null; products: OrderProduct[]; status: OrderStatusValue; total: number } & T) {
+    super(order);
     this.customer = order.customer;
     this.products = order.products;
     this.total = order.total;
@@ -22,4 +28,4 @@ class _Order<T extends PersistedEntity | null> {
 
 export class Order extends _Order<PersistedEntity> {}
 
-export class NotPersistedOrder extends _Order<null> {}
+export class NotPersistedOrder extends _Order<NotPersistedEntity> {}

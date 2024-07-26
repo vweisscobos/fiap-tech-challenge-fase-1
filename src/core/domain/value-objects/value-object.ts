@@ -4,4 +4,8 @@ export class ValueObject<T extends any> {
   equals(valueObject: ValueObject<T>): boolean {
     return this.value === valueObject.value;
   }
+
+  getValue() {
+    return this.value;
+  }
 }

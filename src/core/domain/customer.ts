@@ -1,14 +1,12 @@
-import { PersistedEntity } from "./persisted-entity";
+import { Entity, NotPersistedEntity, PersistedEntity } from "./entity";
 
-class _Customer<T extends PersistedEntity | null> {
-  id: T["id"];
-  createdAt: T["createdAt"];
-  updatedAt: T["updatedAt"];
+export class _Customer<T extends PersistedEntity | NotPersistedEntity> extends Entity<T> {
   name: string;
   email: string;
   document: string;
 
-  constructor(customer: { name: string; email: string; document: string }) {
+  constructor(customer: { name: string; email: string; document: string } & T) {
+    super(customer);
     this.name = customer.name;
     this.email = customer.email;
     this.document = customer.document;
@@ -17,5 +15,5 @@ class _Customer<T extends PersistedEntity | null> {
 
 export class Customer extends _Customer<PersistedEntity> {}
 
-export class NotPersistedCustomer extends _Customer<null> {}
+export class NotPersistedCustomer extends _Customer<NotPersistedEntity> {}
 
